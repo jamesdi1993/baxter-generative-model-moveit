@@ -1,19 +1,19 @@
 #!/usr/bin/python
+from moveit_msgs.msg import DisplayRobotState
+from joint_state_generator import COLLISION_KEY, FILE_DELIMETER, initialize_environment, get_current_state, fill_waypoint
+from src.state_validity_check.state_validity_collision import StateValidity
+
 import baxter_interface
 import copy as cp
 import csv
-import math
 import rospy
 import sys
 import time
-from state_validity_collision import StateValidity
-from moveit_msgs.msg import DisplayRobotState
-from joint_state_generator import COLLISION_KEY, FILE_DELIMETER, initialize_environment, get_current_state, fill_waypoint
 
-COLLISION_KEY = 'inCollision'
+COLLISION_KEY = 'collisionFree'
 
 def visualize_waypoint(limb, waypoint, robot_state_collision_pub, publish_collision = False):    
-    limb.move_to_joint_positions(waypoint) # moves to waypoint for visual confirmation
+    limb.move_to_joint_positions(waypoint) # moves to waypointO for visual confirmation
 
     if not publish_collision and limb is not None:
         # Publish collision information
@@ -24,7 +24,7 @@ def visualize_waypoint(limb, waypoint, robot_state_collision_pub, publish_collis
 def checkCollisionFlag(sv, limb_name, waypoint):
     # Deep copy the waypoint first, then pop the key
     point = cp.deepcopy(waypoint)
-    inCollision = point[COLLISION_KEY]
+    collisionFree = point[COLLISION_KEY]
     point.pop(COLLISION_KEY)
 
     current_state = get_current_state()
@@ -32,8 +32,9 @@ def checkCollisionFlag(sv, limb_name, waypoint):
 
     collisionflag = sv.getStateValidity(rs, group_name=limb_name+'_arm')
     print("Collision flag: %s" % bool(collisionflag))
-    assert collisionflag == inCollision, "Collisionflag does not agree. CollisionFlag in data: %d; Current Flag: %d; \nWaypoint: %s"\
-    % (inCollision, collisionFlag, point)
+    assert collisionflag == collisionFree, "Collisionflag does not agree. CollisionFlag in data: %d; Current Flag: %d; \nWaypoint: %s"\
+    % (collisionFree, collisionFlag, point)
+
 
 if __name__ == '__main__':
     file = sys.argv[1]

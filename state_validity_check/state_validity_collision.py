@@ -1,11 +1,12 @@
 #!/usr/bin/python
-import numpy as np
-import rospy
-from moveit_msgs.srv import GetStateValidity, GetStateValidityRequest, GetStateValidityResponse
+from moveit_msgs.srv import GetStateValidity, GetStateValidityRequest
 from moveit_commander import RobotCommander
 from moveit_msgs.msg import RobotState, DisplayRobotState
+from src.environments.set_environment import main as set_environment
+
 import baxter_interface
-from set_environment import main as set_environment
+import numpy as np
+import rospy
 
 DEFAULT_SV_SERVICE = "/check_state_validity"
 
@@ -19,7 +20,6 @@ JOINT_LIMITS = {
     'w1': (-1.5707, 2.094),
     'w2': (-3.059, 3.059)
 }
-
 
 class StateValidity():
 
@@ -40,10 +40,8 @@ class StateValidity():
             rospy.logwarn("Param '/play_motion/approach_planner/planning_groups' not set. We can't guess controllers")
         rospy.loginfo("Ready for making Validity calls")
 
-
     def close_SV(self):
         self.sv_srv.close()
-
 
     def getStateValidity(self, robot_state, group_name='both_arms_torso', constraints=None):
         """Given a RobotState and a group name and an optional Constraints
@@ -101,7 +99,7 @@ if __name__ == '__main__':
     robot = RobotCommander()
     robot_state = robot.get_current_state()
     rs.joint_state.name = robot_state.joint_state.name
-    rs.joint_state.position = list(robot_state.joint_state.position) # filler for rest of the joint angles not found in waypoinr
+    rs.joint_state.position = list(robot_state.joint_state.position) # filler for rest of the joint angles not found in waypoint
 
     joint_name_indices = [rs.joint_state.name.index(n) for n in waypoint.keys()]
     for i, idx in enumerate(joint_name_indices):

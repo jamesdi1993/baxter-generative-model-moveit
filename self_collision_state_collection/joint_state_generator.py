@@ -1,4 +1,8 @@
 #!/usr/bin/python
+from moveit_commander import PlanningSceneInterface, RobotCommander
+from moveit_msgs.msg import PlanningScene, RobotState
+from src.state_validity_check.state_validity_collision import StateValidity, sample_loc
+
 import baxter_interface
 import copy as cp
 import csv
@@ -6,13 +10,10 @@ import math
 import rospy
 import sys
 import time
-from moveit_commander import PlanningSceneInterface, RobotCommander
-from moveit_msgs.msg import PlanningScene, RobotState, DisplayRobotState
-from state_validity_collision import StateValidity, sample_loc
 
 FILE_EXTENSION = '.csv'
 FILE_DELIMETER = '_'
-COLLISION_KEY = 'inCollision'
+COLLISION_KEY = 'collisionFree'
 BATCH_SIZE  = 1000
 
 def initialize_environment():
