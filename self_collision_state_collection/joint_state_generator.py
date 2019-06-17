@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from moveit_commander import PlanningSceneInterface, RobotCommander
 from moveit_msgs.msg import PlanningScene, RobotState
-from src.state_validity_check.state_validity_collision import StateValidity, sample_loc
+from src.demo import StateValidity, sample_loc
 
 import baxter_interface
 import copy as cp

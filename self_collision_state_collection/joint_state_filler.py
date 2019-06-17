@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from moveit_msgs.msg import DisplayRobotState
-from src.state_validity_check.state_validity_collision import StateValidity
+from src.demo import StateValidity
 from joint_state_generator import COLLISION_KEY, FILE_DELIMETER, initialize_environment, get_current_state, fill_waypoint
 from os.path import isfile, join
 
@@ -18,8 +18,8 @@ BATCH_SIZE = 1000
 INPUT_BASE_PATH = "../data/generated_data/input/"
 OUTPUT_BASE_PATH = "../data/generated_data/validated/"
 PATH_ARGS = ["num_joints", "beta"]
-# TODO: Refactor these methods with the Baxter_vae_self_collision pkg;
 
+# TODO: Refactor these methods with the Baxter_vae_self_collision pkg;
 def find_data_file(path, num_joints):
     # Find the file to read data from;
     file_name = ''

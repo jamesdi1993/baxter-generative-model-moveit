@@ -123,7 +123,6 @@ def main():
     setColor('table_side_right', _colors, table_color, 1)
     setColor('shelf', _colors, shelf_color, 1)
     setColor('duck', _colors, duck_color, 1)
-
     sendColors(_colors, scene)
 
 if __name__ == '__main__':

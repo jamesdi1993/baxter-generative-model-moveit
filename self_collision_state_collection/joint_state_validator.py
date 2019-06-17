@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from moveit_msgs.msg import DisplayRobotState
 from joint_state_generator import COLLISION_KEY, FILE_DELIMETER, initialize_environment, get_current_state, fill_waypoint
-from src.state_validity_check.state_validity_collision import StateValidity
+from src.demo import StateValidity
 
 import baxter_interface
 import copy as cp
@@ -33,7 +33,7 @@ def checkCollisionFlag(sv, limb_name, waypoint):
     collisionflag = sv.getStateValidity(rs, group_name=limb_name+'_arm')
     print("Collision flag: %s" % bool(collisionflag))
     assert collisionflag == collisionFree, "Collisionflag does not agree. CollisionFlag in data: %d; Current Flag: %d; \nWaypoint: %s"\
-    % (collisionFree, collisionFlag, point)
+    % (collisionFree, collisionflag, point)
 
 
 if __name__ == '__main__':
