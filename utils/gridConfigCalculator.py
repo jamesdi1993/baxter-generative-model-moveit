@@ -14,7 +14,7 @@ def calculatePoints(numOfJoints = 7, resolution = 15, arm = 'right'):
 	Calculate the number of configurations given the grid config.
 	"""
 	numOfLimbs = 1
-	if arm is 'both_arms':
+	if arm == 'both_arms':
 		numOfLimbs = 2
 	resolution_rad = resolution * math.pi / 180
 	num_points = np.ones(7)

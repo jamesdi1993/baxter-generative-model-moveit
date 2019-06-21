@@ -39,6 +39,9 @@ def linear_interpolation(start, end, max_segment):
         path.append(pos)
     return path
 
+def cubic_interpolation(start, end, max_segment):
+    pass
+
 def visualize_movement(start, path):
     display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', DisplayTrajectory, queue_size=100) # for visualizing the robot movement;
 
@@ -109,7 +112,7 @@ def generate_edge():
     h_dim1 = 256
     h_dim2 = 100
     d_output = 7  # latent layer;
-    max_segment_factor = 0.005
+    max_segment_factor = 0.1
 
     # load the generator model;
     model = VAE(d_input, h_dim1, h_dim2, d_output)
@@ -127,57 +130,41 @@ def generate_edge():
     print("The start position is: %s" % start_pos)
     print("The end position is: %s" % end_pos)
 
-    dir = end_pos - start_pos
-    edge_length = np.linalg.norm(dir)
     latent_max_segment = set_max_segment_truncated_gaussian(np.zeros(d_output), np.ones(d_output), max_segment_factor)
-    latent_num_points = np.ceil(edge_length / latent_max_segment) + 1 # starting point + path_points;
-    latent_midpoints = np.linspace(0, 1, num=latent_num_points)
+    latent_path = linear_interpolation(start_pos, end_pos, latent_max_segment)
 
-    # Build latent space path;
-    latent_path = []
-    for i in range(latent_midpoints.shape[0]):
+    # Generate decoded path;
+    decoded_path = []
+    for pos in latent_path:
         with torch.no_grad():
-            pos = start_pos + dir * latent_midpoints[i]
-            # print("Position is: %s" % pos)
             point = torch.from_numpy(pos).float().to(device) # latent_space sample
             sample = model.decode(point).cpu().double().numpy() # c_space sample
             state = ob.State(space)
             for i in range(sample.shape[0]):
                 state[i] = sample[i]
             isValid = state_validity_checker.isValid(state) # checking collision status in c-space;
-            latent_path.append((sample, isValid))
+            decoded_path.append((sample, isValid))
 
-    # Decode the path into cspace;
-    cspace_path = []
     cspace_max_segment = set_max_segment_cspace(np.array(JOINT_LIMITS.values()), max_segment_factor)
-    #print("The cspace maximum segment is: %s" % cspace_max_segment)
-
+    cspace_path = []
 
     with torch.no_grad():
         start_cspace = model.decode(torch.from_numpy(start_pos).float().to(device)).cpu().double().numpy()
         end_cspace = model.decode(torch.from_numpy(end_pos).float().to(device)).cpu().double().numpy()
-
-        dir_cspace = end_cspace - start_cspace
-        edge_cspace_length = np.linalg.norm(dir_cspace)
-
-        cspace_num_points = np.ceil(edge_cspace_length / cspace_max_segment) + 1 # starting point + path_points;
-        print("The number of points in cspace is: %s" % cspace_num_points)
-        cspace_midpoints = np.linspace(0, 1, num=cspace_num_points)
-
-        for i in range(cspace_midpoints.shape[0]):
-            pos = start_cspace + dir_cspace * cspace_midpoints[i]
+        path = linear_interpolation(start_cspace, end_cspace, cspace_max_segment)
+        for pos in path:
             state = ob.State(space)
             for i in range(sample.shape[0]):
                 state[i] = pos[i]
             isValid = state_validity_checker.isValid(state)  # checking collision status in c-space;
             cspace_path.append((state, isValid))
-    return latent_path, cspace_path
+    return decoded_path, cspace_path
     # print("The path is: %s" % path)
 
 if __name__=="__main__":
     test_set_max_segment_truncated_gaussian()
 
-    t = 5000
+    t = 2000
     # 6 x t array; Start_free, End_free, latent_edge_in_collision, latent_edge_length, cspace_edge_in_collision, cspace_edge_length
     stats = np.zeros((6, t))
     for i in range(t):
@@ -204,8 +191,8 @@ if __name__=="__main__":
 
         latent_color = np.array([[1.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         cspace_color = np.array([[1.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
-        # visualize_segment(latent_edge, latent_color)
-        # visualize_segment(cspace_edge, cspace_color)
+        visualize_segment(latent_edge, latent_color)
+        visualize_segment(cspace_edge, cspace_color)
         # sleep(5) # sleep for 5 seconds for visual examination
 
     # print("The statistics are: Start (Collision-Free), End (Collision-free), Edge (Collision-free)")

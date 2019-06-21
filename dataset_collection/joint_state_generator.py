@@ -22,6 +22,8 @@ def initialize_environment():
     robot = RobotCommander()
     scene = PlanningSceneInterface()
     scene._scene_pub = rospy.Publisher('planning_scene', PlanningScene, queue_size=0)
+    rospy.sleep(2)
+    return scene, robot
 
 def get_current_state():
     # Prepare a new state object for validity check
@@ -55,7 +57,7 @@ def generate_configs(state_validity, waypoints):
         current_state = get_current_state()
         point = waypoints[index]
         rs = fill_waypoint(point, current_state)
-        collision_flag = state_validity.getStateValidity(rs, group_name=limb_name+'_arm')
+        collision_flag = state_validity.getStateValidity(rs, group_name=limb_name+'_arm').valid
         point[COLLISION_KEY] = int(collision_flag)
         configs.append(point)
     return configs
@@ -71,8 +73,7 @@ if __name__ == '__main__':
     num_joints = int(sys.argv[1])
     num_points = int(sys.argv[2])
 
-    initialize_environment()
-    rospy.sleep(2)
+    scene, robot = initialize_environment()
 
     """ Preliminaries, initialize limb, set up publisher for collision checking """
     limb_name = 'right'

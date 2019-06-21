@@ -30,7 +30,7 @@ def checkCollisionFlag(sv, limb_name, waypoint):
     current_state = get_current_state()
     rs = fill_waypoint(point, current_state)
 
-    collisionflag = sv.getStateValidity(rs, group_name=limb_name+'_arm')
+    collisionflag = sv.getStateValidity(rs, group_name=limb_name+'_arm').valid
     print("Collision flag: %s" % bool(collisionflag))
     assert collisionflag == collisionFree, "Collisionflag does not agree. CollisionFlag in data: %d; Current Flag: %d; \nWaypoint: %s"\
     % (collisionFree, collisionflag, point)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     number_of_points = int(sys.argv[2])
     print("Checking the first %d waypoints in file: %s" % (number_of_points, file))
 
-    initialize_environment()
+    scene, robot = initialize_environment()
     rospy.sleep(2)
     robot_state_collision_pub = rospy.Publisher('/robot_collision_state', DisplayRobotState, queue_size=0)
     sv = StateValidity()

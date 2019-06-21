@@ -67,7 +67,7 @@ def fillCollisionFlag(sv, limb_name, waypoint):
     current_state = get_current_state()
     rs = fill_waypoint(point, current_state)
     try: 
-        collisionflag = sv.getStateValidity(rs, group_name=limb_name + '_arm')
+        collisionflag = sv.getStateValidity(rs, group_name=limb_name + '_arm').valid
         point[COLLISION_KEY] = int(collisionflag)
     except:
         print("An IOError was encourtered. Waypoint: " + str(waypoint))
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     output_name = output_path + file_name.replace('.csv', '') + '_filled' + '.csv'
     print("Writing to output file: %s" % output_name)
 
-    initialize_environment()
+    scene, robot = initialize_environment()
     rospy.sleep(2)
     robot_state_collision_pub = rospy.Publisher('/robot_collision_state', DisplayRobotState, queue_size=0)
     sv = StateValidity()

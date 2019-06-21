@@ -66,8 +66,8 @@ def generate_samples(generated_batch_size, d_output, device, model):
     # Generate sampled outputs;
     with torch.no_grad():
         norms = torch.randn(generated_batch_size, d_output).to(device)
-        samples = model.decode(norms).cpu().numpy()
-    return samples
+        samples = model.decode(norms).double().cpu().numpy()
+        return samples
 
 class SelfCollisionFreeStateSampler(ob.StateSampler):
 

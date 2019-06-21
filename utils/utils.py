@@ -4,8 +4,8 @@ from ompl import base as ob
 import numpy as np
 import time
 
-names = ['_s0', '_s1', '_e0', '_e1', '_w0', '_w1', '_w2']
-limb_names = ['left', 'right']
+JOINT_NAMES = ['_s0', '_s1', '_e0', '_e1', '_w0', '_w1', '_w2']
+LIMB_NAMES = ['left', 'right']
 
 JOINT_LIMITS = {
     's0': (-1.7016, 1.7016),
@@ -35,12 +35,12 @@ def toc(tstart):
 
 def get_joint_names(limb):
     joint_name = []
-    if limb in limb_names:
-        for joint in names:
+    if limb in LIMB_NAMES:
+        for joint in JOINT_NAMES:
             joint_name.append(limb + joint)
     elif limb is 'both_arms':
-        for limb_name in limb_names:
-            for joint in names:
+        for limb_name in LIMB_NAMES:
+            for joint in JOINT_NAMES:
                 joint_name.append(limb_name + joint)
     else:
         raise RuntimeError("Invalid move group encountered.")

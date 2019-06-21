@@ -137,7 +137,7 @@ def plan(samplerIndex, start, goal, ss, space, display_trajectory_publisher):
     ss.setStartAndGoalStates(start, goal)
 
     # create a planner for the defined space
-    planner = og.FMT(si)
+    planner = og.RRTConnect(si) # change this to FMT;
 
     if samplerIndex == 1:
         planner.setVAEFMT(1) # This flag is for turning on sampling with the VAE generator;

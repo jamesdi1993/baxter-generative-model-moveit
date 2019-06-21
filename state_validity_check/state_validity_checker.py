@@ -47,7 +47,7 @@ class MoveitStateValidityChecker(ob.StateValidityChecker):
     def isValid(self, state):
         # ToDo: Check the number of joints available in states;
         robot_state = convertStateToRobotState(state)
-        return self.getStateValidity(robot_state)
+        return self.getStateValidity(robot_state).valid
 
     def getStateValidity(self, robot_state, group_name='both_arms_torso', constraints=None):
         """Given a RobotState and a group name and an optional Constraints
@@ -58,8 +58,10 @@ class MoveitStateValidityChecker(ob.StateValidityChecker):
         if constraints != None:
             gsvr.constraints = constraints
         result = self.sv_srv.call(gsvr)
+        # if not result.valid:
+        #     print("The contact information are: %s" % result.contacts)
         # print("After checking for state validity. Result: %s" % result.valid)
-        return result.valid
+        return result
 
 class FCLStateValidityChecker():
     """
