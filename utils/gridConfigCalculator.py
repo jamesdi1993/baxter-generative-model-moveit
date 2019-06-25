@@ -22,7 +22,6 @@ def calculatePoints(numOfJoints = 7, resolution = 15, arm = 'right'):
 		num_points[i] = math.ceil(joint_limits[i]/resolution_rad)
 	return np.product(num_points) ** numOfLimbs
 
-
 def calculateMemory(numberOfPoints = 0, numberOfJoints = 7, name = 'MB'):
 	factor = units[name]
 	return numberOfPoints * numberOfJoints * 8.0 / factor

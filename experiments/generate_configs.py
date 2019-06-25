@@ -13,7 +13,7 @@ except ImportError:
     from ompl import geometric as og
 
 from src.sampler.self_collision_free_sampler import VAE
-from src.environments.base_environment import initialize_space
+from src.env.space import initialize_space
 from src.state_validity_check.state_validity_checker import MoveitStateValidityChecker
 from src.utils.utils import JOINT_NAMES
 

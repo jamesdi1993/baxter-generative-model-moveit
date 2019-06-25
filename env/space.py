@@ -14,19 +14,8 @@ except ImportError:
     from ompl import base as ob
     from ompl import geometric as og
 
-from moveit_commander import RobotCommander
-from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory
-from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from ..sampler.self_collision_free_sampler import allocSelfCollisionFreeStateSampler
-from ..state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from ..utils.utils import convertStateToRobotState, generate_random_state, get_joint_names, JOINT_LIMITS, JOINT_INDEX
-from ..utils.positions import nominal_pos, neutral_position
-from time import sleep
-from math import fabs
+from ..utils.utils import JOINT_LIMITS, JOINT_INDEX
 
-import moveit_commander
-import rospy
-import time
 
 def initialize_space():
     dof = 7

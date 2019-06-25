@@ -14,7 +14,7 @@ except ImportError:
 
 from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from src.environments.base_environment import initialize_space
+from src.env.space import initialize_space
 from src.state_validity_check.state_validity_checker import MoveitStateValidityChecker
 from src.sampler.self_collision_free_sampler import VAE
 from src.utils.utils import convertStateToJointState, convertStateToRobotState, JOINT_LIMITS

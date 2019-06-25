@@ -17,6 +17,14 @@ import rospy
 
 DEFAULT_SV_SERVICE = "/check_state_validity"
 
+class DummyStateValidityChecker(ob.StateValidityChecker):
+    def __init__(self, si):
+        super(DummyStateValidityChecker, self).__init__(si)
+
+    def isValid(self, state):
+        # Always return true
+        return True
+
 class MoveitStateValidityChecker(ob.StateValidityChecker):
     """
     This is the base class for StateValidity Checking;
@@ -33,11 +41,6 @@ class MoveitStateValidityChecker(ob.StateValidityChecker):
         except (rospy.ServiceException, rospy.ROSException), e:
             rospy.logerr("Service call failed: %s" % (e,))
 
-        if rospy.has_param('/play_motion/approach_planner/planning_groups'):
-            list_planning_groups = rospy.get_param('/play_motion/approach_planner/planning_groups')
-        else:
-            rospy.logwarn(
-                "Param '/play_motion/approach_planner/planning_groups' not set. We can't guess controllers")
         rospy.loginfo("Ready for making Validity calls")
 
     def close_SV(self):
