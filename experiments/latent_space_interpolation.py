@@ -22,6 +22,7 @@ from src.utils.utils import get_joint_names
 from time import sleep
 from src.forward_kinematics.fkClient import FKClient
 from src.visualization.workspace_plot_rviz import WaypointPublisher
+from src.env.environments import one_box_environment
 
 import numpy as np
 import rospy
@@ -99,7 +100,7 @@ def test_set_max_segment_truncated_gaussian():
     print("Test for set_max_truncated_gaussian passed.")
 
 def generate_edge():
-    rospy.init_node('latent_space_experiments')
+    # rospy.init_node('latent_space_experiments')
     space = initialize_space()
     ss = og.SimpleSetup(space)
     si = ss.getSpaceInformation()
@@ -116,7 +117,7 @@ def generate_edge():
 
     # load the generator model;
     model = VAE(d_input, h_dim1, h_dim2, d_output)
-    model.load_state_dict(torch.load("./data/model/model.pth"))
+    model.load_state_dict(torch.load("./data/model/model.pth", map_location='cpu'))
     model.eval()
 
     # set up device;
@@ -162,9 +163,11 @@ def generate_edge():
     # print("The path is: %s" % path)
 
 if __name__=="__main__":
-    test_set_max_segment_truncated_gaussian()
+    # test_set_max_segment_truncated_gaussian()
+    rospy.init_node('latent_space_experiments')
+    one_box_environment()
 
-    t = 2000
+    t = 100
     # 6 x t array; Start_free, End_free, latent_edge_in_collision, latent_edge_length, cspace_edge_in_collision, cspace_edge_length
     stats = np.zeros((6, t))
     for i in range(t):
