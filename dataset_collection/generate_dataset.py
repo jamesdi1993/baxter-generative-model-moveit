@@ -16,9 +16,16 @@ except ImportError:
 from src.env.environments import empty_environment, one_box_environment
 from src.state_validity_check.state_validity_checker import MoveitStateValidityChecker
 from src.env.space import initialize_space
+from src.dataset_collection.label_generators import EnvironmentCollisionLabelGenerator, EndEffectorPositionGenerator, get_collision_label_name
+from src.dataset_collection.common import check_config, augment_dataset
+from src.env.self_collision_free_sampling import plan
 from src.utils.utils import get_joint_names, sample_loc, construct_robot_state
-from moveit_msgs.msg import RobotState
+from src.visualization.workspace_plot_rviz import WaypointPublisher
+from ..utils.positions import nominal_pos
+
+from moveit_msgs.msg import RobotState, DisplayTrajectory
 from sensor_msgs.msg import JointState
+from geometry_msgs.msg import Point
 
 import copy as cp
 import csv
@@ -62,24 +69,6 @@ def generate_configs(num_samples, state_validity_checker, limb_name):
         sample[SELF_COLLISION_KEY] = int(valid)
         configs.append(sample)
     return configs
-
-def check_config(config, state_validity_checker, limb_name):
-    """
-    Check the validity of a configuration
-    :param : The configurations to check against.
-    :param state_validity_checker: The validity checker
-    :param space: The space to check for
-    :param limb_name: The name of the limb.
-    :return: The validty of the configurations.
-    """
-    # Construct a robotstate object from a dictionary
-    rs = RobotState()
-    js = JointState()
-    js.name = get_joint_names('right')
-    js.position = [config[joint] for joint in js.name]
-    rs.joint_state = js
-    result = state_validity_checker.getStateValidity(rs, group_name=limb_name + '_arm')
-    return result.valid
 
 def generate_self_collision_dataset(start, num_joints, num_points):
     """
@@ -146,64 +135,7 @@ def generate_self_collision_dataset(start, num_joints, num_points):
     BATCH_SIZE, reduce(lambda x, y: x + y, batch_time) / len(batch_time)))
     return file_name
 
-def get_label_name(env_name):
-    return  env_name + '_' + COLLISION_KEY
-
-def augment_collision_dataset(file_name, env_name):
-    """
-    Augment the dataset with additional labels, based on the environment.
-    :param file_name: The file name
-    :param env_name: The environment for generating the additional label.
-    :return: The file that corresponds to the new dataset.
-    """
-    print("Generating environment collision label for: %s" % (file_name))
-    start = time.time()
-    if env_name == 'one_box_environment':
-        one_box_environment() # initialize env
-
-    # initialize validity check
-    space = initialize_space()
-    ss = og.SimpleSetup(space)
-    state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
-
-    file_prefix = os.path.abspath(file_name).split('.')[0]
-    output_file_name = file_prefix + "_augmented" + ".csv"
-    label = get_label_name(env_name)
-
-    with open(file_name, mode='rb') as input_file:
-        csv_reader = csv.DictReader(input_file, quoting=csv.QUOTE_NONNUMERIC)
-        lines_read = 0
-        headers = cp.deepcopy(csv_reader.fieldnames)
-        headers.append(label)
-
-        print("Writing to output file: %s" % output_file_name)
-
-        # Write headers with the fields in the input
-        with open(output_file_name, mode='w') as output_file:
-            # Quote header such that it is easier for reader to parse data
-            writer = csv.DictWriter(output_file, fieldnames=headers, quoting=csv.QUOTE_NONNUMERIC)
-            writer.writeheader()
-            points = []
-            batch = 0
-
-            for waypoint in csv_reader:
-                if waypoint[SELF_COLLISION_KEY] == 0:
-                    waypoint[label] = 0
-                else:
-                    env_collision_free = check_config(waypoint, state_validity_checker, 'right')
-                    waypoint[label] = int(env_collision_free)
-                points.append(waypoint)
-                lines_read += 1
-                if lines_read % BATCH_SIZE == 0:
-                    writer.writerows(points)
-                    points = []
-                    batch += 1
-                    print("Finished generating data for batch: %s" % (batch))
-            writer.writerows(points)
-    print("Finished generating augmented dataset. Time Elasped: %s" % (time.time() - start))
-    return output_file
-
-if __name__ == '__main__':
+def main():
     rospy.init_node('BaxterEnvCollisionDatasetGeneration')
     env = "one_box_environment"
 
@@ -212,7 +144,52 @@ if __name__ == '__main__':
     num_points = int(sys.argv[2])
 
     start = int(time.time())
-    file = generate_self_collision_dataset(start, num_joints, num_points)
-    dataset = augment_collision_dataset(file_name=file, env_name=env) # generate the new dataset;
+    # file = generate_self_collision_dataset(start, num_joints, num_points)
+    # dataset = augment_collision_dataset(file_name=file, env_name=env) # generate the new dataset;
+
+    # label_generator = EnvironmentCollisionLabelGenerator(env_name=env)
+    label_generator = EndEffectorPositionGenerator(env_name=env)
+    file = "/home/nikhildas/ros_ws/src/baxter_moveit_config/data/sampled_data/self_and_environment_collision/right_7_3556224_1561483420_augmented.csv"
+    dataset = augment_dataset(file_name=file, env_name=env,
+                              label_generator=label_generator)  # generate the new dataset;
     print("Finished generating the entire dataset for environment: %s" % env)
     print("Time elapsed: %s" % (time.time() - start))
+
+def test_augment_end_effector_pos():
+    rospy.init_node('End_effector_pos_test')
+    # for publishing trajectory;
+    display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', DisplayTrajectory,
+                                                   queue_size=0)
+    rospy.sleep(0.5)
+
+    space = initialize_space()
+    ss = og.SimpleSetup(space)
+    state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+    ss.setStateValidityChecker(state_validity_checker)
+
+    start = nominal_pos(space)
+
+    file = "/home/nikhildas/ros_ws/src/baxter_moveit_config/data/sampled_data/self_and_environment_collision/right_7_test.csv"
+    publisher = WaypointPublisher()
+
+    label = get_collision_label_name("one_box_environment")
+    with open(file, mode='rb') as input_file:
+        csv_reader = csv.DictReader(input_file,  quoting=csv.QUOTE_NONNUMERIC)
+        for waypoint in csv_reader:
+            if waypoint[label] == 1:
+                point = {}
+                for key in get_joint_names('right'):
+                    point[key] = waypoint[key]
+                goal = construct_robot_state(space, point)
+                plan(0, start, goal, ss, space, display_trajectory_publisher)
+                position = Point()
+                position.x = waypoint['x']
+                position.y = waypoint['y']
+                position.z = waypoint['z']
+                # print("The position of the data point is: %s" % position)
+                publisher.publish_waypoints([position], scale=[0.05, 0.05, 0.05])
+                time.sleep(5.0)
+
+if __name__ == '__main__':
+    main()
+    # test_augment_end_effector_pos()

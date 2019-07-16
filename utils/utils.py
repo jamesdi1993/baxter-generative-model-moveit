@@ -77,6 +77,12 @@ def convertStateToRobotState(state):
     rs.joint_state = convertStateToJointState(state)
     return rs
 
+def convertWaypointToJointState(waypoint):
+    js = JointState()
+    js.name = get_joint_names('right')
+    js.position = [waypoint[joint_name] for joint_name in js.name]
+    return js
+
 def convertStateToJointState(state):
     # Map an AbstractState object in OMPL to a RobotState object in Moveit!
     js = JointState()
@@ -89,6 +95,7 @@ def construct_robot_state(space, waypoint):
     """
     Map a waypoint to an AbstractState object in OMPL
     """
+    print("The waypoint is: %s" % (waypoint,))
     state = ob.State(space)
     for joint, value in waypoint.items():
         joint_name = joint.split('_')[1] # example waypoint: {'right_e0': 0, 'right_e1': 0, ...}
@@ -110,7 +117,6 @@ def test_convert_state_to_robot_state():
     state[4] = 0
     state[5] = 1.26
     state[6] = 0
-
     # print("The list of states is: %s" % state)
 
     robot_state = convertStateToRobotState(state)
