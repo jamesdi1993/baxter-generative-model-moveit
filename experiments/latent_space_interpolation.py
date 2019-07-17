@@ -14,15 +14,15 @@ except ImportError:
 
 from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from src.env.space import initialize_space
-from src.state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from src.sampler.self_collision_free_sampler import VAE
-from src.utils.utils import convertStateToJointState, convertStateToRobotState, JOINT_LIMITS
-from src.utils.utils import get_joint_names
+from baxter_interfaces.env.space import initialize_space
+from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
+from baxter_interfaces.sampler.self_collision_free_sampler import VAE
+from baxter_interfaces.utils.utils import convertStateToJointState, convertStateToRobotState, JOINT_LIMITS
+from baxter_interfaces.utils.utils import get_joint_names
 from time import sleep
-from src.forward_kinematics.fkClient import FKClient
-from src.visualization.workspace_plot_rviz import WaypointPublisher
-from src.env.environments import one_box_environment
+from baxter_interfaces.forward_kinematics.fkClient import FKClient
+from baxter_interfaces.visualization.workspace_plot_rviz import WaypointPublisher
+from baxter_interfaces.env.environments import one_box_environment
 
 import numpy as np
 import rospy

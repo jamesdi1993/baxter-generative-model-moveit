@@ -1,6 +1,6 @@
 from moveit_commander import PlanningSceneInterface, RobotCommander
 from moveit_msgs.msg import PlanningScene, DisplayTrajectory
-from src.utils.utils import sample_loc
+from baxter_interfaces.utils.utils import sample_loc
 
 import baxter_interface
 import rospy

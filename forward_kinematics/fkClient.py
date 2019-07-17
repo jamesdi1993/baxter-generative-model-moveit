@@ -4,12 +4,12 @@ import rospy
 from moveit_msgs.srv import GetPositionFK
 from moveit_msgs.srv import GetPositionFKRequest
 from moveit_msgs.srv import GetPositionFKResponse
-from src.utils.utils import get_joint_names, convertStateToJointState
+from baxter_interfaces.utils.utils import get_joint_names, convertStateToJointState
 
 
 """
 Client for Getting cartesian coordinate from joint coordinate;
-Adapted from: https://github.com/uts-magic-lab/moveit_python_tools/blob/master/src/moveit_python_tools/get_fk.py
+Adapted from: https://github.com/uts-magic-lab/moveit_python_tools/blob/master/baxter_interfaces/moveit_python_tools/get_fk.py
 """
 
 class FKClient():

@@ -99,12 +99,12 @@ def main():
     scene.add_box("table_center", p1, size=(.5, 1.5, 0.4)) # dimensions of the table
     scene.add_box("table_side_left", p1_l, size=(.5, 1.5, 0.4))
     scene.add_box("table_side_right", p1_r, size=(.5, 1.5, 0.4))
-    scene.add_mesh("shelf", p2, "/home/nikhildas/ros_ws/src/baxter_moveit_config/baxter_scenes/bookshelf_light.stl", size=(.025, .01, .01))
+    scene.add_mesh("shelf", p2, "/home/nikhildas/ros_ws/baxter_interfaces/baxter_moveit_config/baxter_scenes/bookshelf_light.stl", size=(.025, .01, .01))
     scene.add_plane("wall", pw, normal=(0, 1, 0))
 
     part_size = (0.07, 0.05, 0.12)
     scene.add_box("part", p_ob1, size=part_size)
-    scene.add_mesh("duck", p_ob2, "/home/nikhildas/ros_ws/src/baxter_moveit_config/baxter_scenes/duck.stl", size=(.001, .001, .001))
+    scene.add_mesh("duck", p_ob2, "/home/nikhildas/ros_ws/baxter_interfaces/baxter_moveit_config/baxter_scenes/duck.stl", size=(.001, .001, .001))
 
     rospy.sleep(1)
 

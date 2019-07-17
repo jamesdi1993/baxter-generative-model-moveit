@@ -2,7 +2,7 @@
 from moveit_msgs.srv import GetStateValidity, GetStateValidityRequest
 from moveit_commander import RobotCommander
 from moveit_msgs.msg import RobotState, DisplayRobotState
-from src.env.set_environment import main as set_environment
+from baxter_interfaces.env.set_environment import main as set_environment
 
 import baxter_interface
 import numpy as np

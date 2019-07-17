@@ -12,11 +12,11 @@ except ImportError:
     from ompl import base as ob
     from ompl import geometric as og
 
-from src.dataset_collection.common import check_config
-from src.env.space import initialize_space
-from src.forward_kinematics.fkClient import FKClient
-from src.state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from src.utils.utils import get_joint_names, convertWaypointToJointState
+from baxter_interfaces.dataset_collection.common import check_config
+from baxter_interfaces.env.space import initialize_space
+from baxter_interfaces.forward_kinematics.fkClient import FKClient
+from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
+from baxter_interfaces.utils.utils import get_joint_names, convertWaypointToJointState
 from moveit_msgs.msg import RobotState
 from sensor_msgs.msg import JointState
 
@@ -65,7 +65,7 @@ class EnvironmentCollisionLabelGenerator(LabelGenerator):
 
     def fill_label(self, waypoint):
         label = self.headers[0]
-        self_collision_free = waypoint.get(SELF_COLLISION_KEY)
+        self_collision_free = waypoint.get(SELF_COLLISION_KEY) # check if self_collision label is present;
         if self_collision_free == 0:
             # if in self_collision
             waypoint[label] = 0

@@ -1,4 +1,4 @@
-from src.sampler.self_collision_free_sampler import VAE
+from baxter_interfaces.sampler.self_collision_free_sampler import VAE
 import torch
 
 def load_model():

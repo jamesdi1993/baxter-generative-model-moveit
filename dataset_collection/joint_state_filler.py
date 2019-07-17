@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from moveit_msgs.msg import DisplayRobotState
-from src.demo import StateValidity
+from baxter_interfaces.demo import StateValidity
 from joint_state_generator import COLLISION_KEY, FILE_DELIMETER, initialize_environment, get_current_state, fill_waypoint
 from os.path import isfile, join
 
