@@ -14,7 +14,7 @@ except ImportError:
 
 from baxter_interfaces.sampler.self_collision_free_sampler import VAE
 from baxter_interfaces.env.space import initialize_space
-from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
+from baxter_interfaces.state_validity_check.state_validity_checker import MoveitOMPLStateValidityChecker
 from baxter_interfaces.utils.utils import JOINT_NAMES
 
 import csv
@@ -53,7 +53,7 @@ def main():
     ss = og.SimpleSetup(space)
     si = ss.getSpaceInformation()
 
-    state_validity_checker = MoveitStateValidityChecker(si)
+    state_validity_checker = MoveitOMPLStateValidityChecker(si)
     # TODO: Implement a state validity checker
     ss.setStateValidityChecker(state_validity_checker)
 

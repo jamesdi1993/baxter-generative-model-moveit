@@ -13,8 +13,8 @@ except ImportError:
     from ompl import geometric as og
 
 #!/usr/bin/python
-from baxter_interfaces.env.environments import empty_environment, one_box_environment
-from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
+from baxter_interfaces.env.environments import empty_environment
+from baxter_interfaces.state_validity_check.state_validity_checker import MoveitOMPLStateValidityChecker
 from baxter_interfaces.env.space import initialize_space
 from baxter_interfaces.dataset_collection.label_generators import SelfCollisionLabelGenerator, EnvironmentCollisionLabelGenerator, EndEffectorPositionGenerator, get_collision_label_name
 from baxter_interfaces.dataset_collection.common import check_config, augment_dataset
@@ -84,7 +84,7 @@ def generate_self_collision_dataset(start, num_joints, num_points):
     # initialize validity check
     space = initialize_space()
     ss = og.SimpleSetup(space)
-    state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+    state_validity_checker = MoveitOMPLStateValidityChecker(ss.getSpaceInformation())
 
     # header for the dataset
     limb_name = 'right'
@@ -177,7 +177,7 @@ def test_augment_end_effector_pos():
 
     space = initialize_space()
     ss = og.SimpleSetup(space)
-    state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+    state_validity_checker = MoveitOMPLStateValidityChecker(ss.getSpaceInformation())
     ss.setStateValidityChecker(state_validity_checker)
 
     start = nominal_pos(space)

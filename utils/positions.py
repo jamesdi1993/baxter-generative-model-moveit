@@ -38,3 +38,5 @@ def neutral_position(space):
     pos[5] = 1.26
     pos[6] = 0
     return pos
+
+NEURTRAL_POSITION = [0.0, -0.55, 0.0, 0.75, 0.0, 1.26, 0.0]

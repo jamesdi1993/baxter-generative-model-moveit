@@ -11,27 +11,23 @@ except ImportError:
 from moveit_msgs.msg import RobotState
 from moveit_msgs.srv import GetStateValidity, GetStateValidityRequest
 from ompl.base import State
-from ..utils.utils import get_joint_names, convertStateToRobotState
+from baxter_interfaces.utils.utils import convertStateToRobotState
 
 import rospy
 
 DEFAULT_SV_SERVICE = "/check_state_validity"
 
 class DummyStateValidityChecker(ob.StateValidityChecker):
-    def __init__(self, si):
+    def __init__(self):
         super(DummyStateValidityChecker, self).__init__(si)
 
     def isValid(self, state):
         # Always return true
         return True
 
-class MoveitStateValidityChecker(ob.StateValidityChecker):
-    """
-    This is the base class for StateValidity Checking;
-    """
-    # Initialize a StateValidity class
-    def __init__(self, si):
-        super(MoveitStateValidityChecker, self).__init__(si)
+class MoveitStateValidityChecker():
+
+    def __init__(self):
         rospy.loginfo("Initializing MoveitStateValidityChecker class")
         self.sv_srv = rospy.ServiceProxy(DEFAULT_SV_SERVICE, GetStateValidity)
         rospy.loginfo("Connecting to State Validity service")
@@ -46,12 +42,6 @@ class MoveitStateValidityChecker(ob.StateValidityChecker):
     def close_SV(self):
         self.sv_srv.close()
 
-    # Override the StateValidityChecker method;
-    def isValid(self, state):
-        # ToDo: Check the number of joints available in states;
-        robot_state = convertStateToRobotState(state)
-        return self.getStateValidity(robot_state).valid
-
     def getStateValidity(self, robot_state, group_name='both_arms_torso', constraints=None):
         """Given a RobotState and a group name and an optional Constraints
         return the validity of the State"""
@@ -65,6 +55,22 @@ class MoveitStateValidityChecker(ob.StateValidityChecker):
         #     print("The contact information are: %s" % result.contacts)
         # print("After checking for state validity. Result: %s" % result.valid)
         return result
+
+class MoveitOMPLStateValidityChecker(ob.StateValidityChecker):
+    """
+    This is the base class for StateValidity Checking;
+    """
+    # Initialize a StateValidity class
+    def __init__(self, si):
+        super(MoveitOMPLStateValidityChecker, self).__init__(si)
+        self.state_validity_checker = MoveitStateValidityChecker()
+
+    # Override the StateValidityChecker method;
+    def isValid(self, state):
+        # ToDo: Check the number of joints available in states;
+        robot_state = convertStateToRobotState(state)
+        return self.state_validity_checker.getStateValidity(robot_state).valid
+
 
 class FCLStateValidityChecker():
     """

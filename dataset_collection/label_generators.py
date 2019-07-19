@@ -13,10 +13,9 @@ except ImportError:
     from ompl import geometric as og
 
 from baxter_interfaces.dataset_collection.common import check_config
-from baxter_interfaces.env.space import initialize_space
 from baxter_interfaces.forward_kinematics.fkClient import FKClient
 from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from baxter_interfaces.utils.utils import get_joint_names, convertWaypointToJointState
+from baxter_interfaces.utils.utils import convertWaypointToJointState
 from moveit_msgs.msg import RobotState
 from sensor_msgs.msg import JointState
 
@@ -36,6 +35,7 @@ class LabelGenerator(object):
         raise NotImplementedError
 
 class SelfCollisionLabelGenerator(LabelGenerator):
+
     """
     A generator that produces environment collision label.
     """
@@ -43,15 +43,14 @@ class SelfCollisionLabelGenerator(LabelGenerator):
         super(SelfCollisionLabelGenerator, self).__init__(env_name)
         self.headers = [SELF_COLLISION_KEY]
         self.label = "selfCollision"
-        space = initialize_space()
-        ss = og.SimpleSetup(space)
-        self.state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+        self.state_validity_checker = MoveitStateValidityChecker()
 
     def fill_label(self, waypoint):
         self_collision_free = check_config(waypoint, self.state_validity_checker, 'right')
         waypoint[self.headers[0]] = int(self_collision_free)
 
 class EnvironmentCollisionLabelGenerator(LabelGenerator):
+
     """
     A generator that produces environment collision label.
     """
@@ -59,9 +58,7 @@ class EnvironmentCollisionLabelGenerator(LabelGenerator):
         super(EnvironmentCollisionLabelGenerator, self).__init__(env_name)
         self.headers = [get_collision_label_name(self.env_name)]
         self.label = "envCollision"
-        space = initialize_space()
-        ss = og.SimpleSetup(space)
-        self.state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+        self.state_validity_checker = MoveitStateValidityChecker()
 
     def fill_label(self, waypoint):
         label = self.headers[0]

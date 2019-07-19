@@ -17,10 +17,10 @@ except ImportError:
 from moveit_commander import RobotCommander
 from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from ..sampler.self_collision_free_sampler import allocSelfCollisionFreeStateSampler
-from ..state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from ..utils.utils import convertStateToRobotState, generate_random_state, get_joint_names, JOINT_LIMITS, JOINT_INDEX
-from ..utils.positions import nominal_pos, neutral_position
+from baxter_interfaces.sampler.self_collision_free_sampler import allocSelfCollisionFreeStateSampler
+from baxter_interfaces.state_validity_check.state_validity_checker import MoveitOMPLStateValidityChecker
+from baxter_interfaces.utils.utils import convertStateToRobotState, generate_random_state, get_joint_names, JOINT_LIMITS, JOINT_INDEX
+from baxter_interfaces.utils.positions import nominal_pos, neutral_position
 from time import sleep
 from math import fabs
 
@@ -77,7 +77,7 @@ def benchmark(goal_config='fixed'):
     space = initialize_space()
     ss = og.SimpleSetup(space)
 
-    state_validity_checker = MoveitStateValidityChecker(ss.getSpaceInformation())
+    state_validity_checker = MoveitOMPLStateValidityChecker(ss.getSpaceInformation())
     # TODO: Implement a state validity checker
     ss.setStateValidityChecker(state_validity_checker)
 
