@@ -1,5 +1,5 @@
 from baxter_interfaces.forward_kinematics.fkClient import FKClient
-from baxter_interfaces.sampler.self_collision_free_sampler import VAE, generate_samples
+from baxter_interfaces.sampler.collision_free_sampler import VAE, generate_samples
 from baxter_interfaces.utils.utils import convertStateToJointState
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker

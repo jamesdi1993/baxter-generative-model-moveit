@@ -69,10 +69,10 @@ def generate_samples(generated_batch_size, d_output, device, model):
         samples = model.decode(norms).double().cpu().numpy()
         return samples
 
-class SelfCollisionFreeStateSampler(ob.StateSampler):
+class CollisionFreeStateSampler(ob.StateSampler):
 
     def __init__(self, space):
-        super(SelfCollisionFreeStateSampler, self).__init__(space)
+        super(CollisionFreeStateSampler, self).__init__(space)
         self.name_ = "self_collision_free_sampler"
         self.d_input = 7
         self.h_dim1 = 256
@@ -95,7 +95,7 @@ class SelfCollisionFreeStateSampler(ob.StateSampler):
 def allocSelfCollisionFreeStateSampler(si):
     # we can perform any additional setup / configuration of a sampler here,
     # but there is nothing to tweak in case of the ObstacleBasedValidStateSampler.
-    return SelfCollisionFreeStateSampler(si)
+    return CollisionFreeStateSampler(si)
 
 if __name__=="__main__":
     dof = 7

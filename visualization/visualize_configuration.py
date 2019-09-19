@@ -1,5 +1,5 @@
 from baxter_interfaces.env.environments import empty_environment, one_box_environment
-from baxter_interfaces.sampler.self_collision_free_sampler import generate_samples
+from baxter_interfaces.sampler.collision_free_sampler import generate_samples
 from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
 from baxter_interfaces.dataset_collection.path_configs import MODEL_OUTPUT_TEMPLATE
 from baxter_interfaces.utils.model_loader import load_model

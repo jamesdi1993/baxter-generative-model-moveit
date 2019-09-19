@@ -12,7 +12,7 @@ except ImportError:
     from ompl import base as ob
     from ompl import geometric as og
 
-from baxter_interfaces.sampler.self_collision_free_sampler import VAE
+from baxter_interfaces.sampler.collision_free_sampler import VAE
 from baxter_interfaces.env.space import initialize_space
 from baxter_interfaces.state_validity_check.state_validity_checker import MoveitOMPLStateValidityChecker
 from baxter_interfaces.utils.utils import JOINT_NAMES

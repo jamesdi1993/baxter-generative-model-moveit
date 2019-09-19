@@ -1,4 +1,4 @@
-from baxter_interfaces.sampler.self_collision_free_sampler import VAE
+from baxter_interfaces.sampler.collision_free_sampler import VAE
 import torch
 
 # TODO: Include model configurations into the model file, including d_input, h_dim1, h_dim2, d_output

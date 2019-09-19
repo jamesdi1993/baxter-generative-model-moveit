@@ -16,7 +16,7 @@ from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory, RobotState
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from baxter_interfaces.dataset_collection.path_configs import MODEL_OUTPUT_TEMPLATE
 from baxter_interfaces.state_validity_check.state_validity_checker import MoveitStateValidityChecker
-from baxter_interfaces.sampler.self_collision_free_sampler import VAE
+from baxter_interfaces.sampler.collision_free_sampler import VAE
 from baxter_interfaces.utils.utils import convertStateToJointState, convertStateToRobotState, convertWaypointToJointState, JOINT_LIMITS
 from baxter_interfaces.utils.utils import get_joint_names, sample_loc
 from time import sleep

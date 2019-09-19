@@ -17,12 +17,11 @@ except ImportError:
 from moveit_msgs.msg import DisplayTrajectory, RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from baxter_interfaces.env.environments import empty_environment, one_box_environment, one_pillar_environment
-from baxter_interfaces.sampler.self_collision_free_sampler import allocSelfCollisionFreeStateSampler
+from baxter_interfaces.sampler.collision_free_sampler import allocSelfCollisionFreeStateSampler
 from baxter_interfaces.state_validity_check.state_validity_checker import TimedMoveitOMPLStateValidityChecker
 from baxter_interfaces.utils.utils import convertStateToRobotState, generate_random_state, get_joint_names, JOINT_LIMITS, JOINT_INDEX
 from baxter_interfaces.utils.positions import nominal_pos, neutral_position
 from time import sleep
-from math import fabs
 
 import argparse
 import numpy as np
