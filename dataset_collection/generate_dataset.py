@@ -18,22 +18,19 @@ from baxter_interfaces.state_validity_check.state_validity_checker import Moveit
 from baxter_interfaces.env.space import initialize_space
 from baxter_interfaces.dataset_collection.label_generators import SelfCollisionLabelGenerator, EnvironmentCollisionLabelGenerator, EndEffectorPositionGenerator, get_collision_label_name
 from baxter_interfaces.dataset_collection.common import check_config, augment_dataset
-from baxter_interfaces.env.self_collision_free_sampling import plan
+from baxter_interfaces.experiments.vae_motion_planning import plan
 from baxter_interfaces.utils.utils import get_joint_names, sample_loc, construct_robot_state
 from baxter_interfaces.visualization.workspace_plot_rviz import WaypointPublisher
 from baxter_interfaces.utils.positions import nominal_pos
 
-from moveit_msgs.msg import RobotState, DisplayTrajectory
-from sensor_msgs.msg import JointState
+from moveit_msgs.msg import DisplayTrajectory
 from geometry_msgs.msg import Point
 
 import argparse
-import copy as cp
 import csv
 import math
 import os
 import rospy
-import sys
 import time
 
 DIRECTORY = "./data/%s/input"
@@ -206,9 +203,13 @@ def test_augment_end_effector_pos():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+    # Sample usage
+    # python -m baxter_interfaces.env.environments --env one_pillar_environment
+    # --file /home/nikhildas/ros_ws/src/baxter_moveit_config/data/empty_environment/input/right_7_10000_1563296904.csv --label envCollision
+
     # dataset configurations
     parser.add_argument('--file') # if file is presented, then augment label;
-    parser.add_argument('--env', choices=['empty_environment','one_box_environment'])
+    parser.add_argument('--env', choices=['empty_environment','one_box_environment', 'one_pillar_environment'])
     parser.add_argument('--label', choices=['selfCollision', 'envCollision', 'endPosition'])
     parser.add_argument('--num-joints', type=int, default=7)
     parser.add_argument('--num-points', type=int, default=10000)

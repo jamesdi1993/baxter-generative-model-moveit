@@ -81,7 +81,7 @@ class SelfCollisionFreeStateSampler(ob.StateSampler):
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = VAE(self.d_input, self.h_dim1, self.h_dim2, self.d_output)
-        self.model.load_state_dict(torch.load("./data/model/model.pth"))
+        self.model.load_state_dict(torch.load("./data/model/model.pth", map_location='cpu'))
         self.model.eval()
 
         # TODO: Load model here;

@@ -14,6 +14,7 @@ from ompl.base import State
 from baxter_interfaces.utils.utils import convertStateToRobotState
 
 import rospy
+import time
 
 DEFAULT_SV_SERVICE = "/check_state_validity"
 
@@ -57,6 +58,7 @@ class MoveitStateValidityChecker():
         return result
 
 class MoveitOMPLStateValidityChecker(ob.StateValidityChecker):
+
     """
     This is the base class for StateValidity Checking;
     """
@@ -70,6 +72,37 @@ class MoveitOMPLStateValidityChecker(ob.StateValidityChecker):
         # ToDo: Check the number of joints available in states;
         robot_state = convertStateToRobotState(state)
         return self.state_validity_checker.getStateValidity(robot_state).valid
+
+    def setTimer(self):
+        self.timer_activated = True
+
+class TimedMoveitOMPLStateValidityChecker(MoveitOMPLStateValidityChecker):
+
+    def __init__(self, si):
+        super(TimedMoveitOMPLStateValidityChecker, self).__init__(si)
+        self.total_collision_check_time = 0
+        self.timer_activated = False
+        self.counter = 0
+
+    def isValid(self, state):
+        # Not thread-safe;
+        if self.timer_activated:
+            start = time.time()
+            isValid = super(TimedMoveitOMPLStateValidityChecker, self).isValid(state)
+            self.total_collision_check_time = self.total_collision_check_time + time.time() - start
+            self.counter += 1
+            return isValid
+        else:
+            return super(TimedMoveitOMPLStateValidityChecker, self).isValid(state)
+
+    def resetTimer(self):
+        self.total_collision_check_time = 0
+        self.timer_activated = True
+        self.counter = 0
+
+    def getTime(self):
+        return self.total_collision_check_time, self.counter
+
 
 
 class FCLStateValidityChecker():

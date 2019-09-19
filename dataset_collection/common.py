@@ -1,7 +1,7 @@
 from moveit_msgs.msg import RobotState
 from sensor_msgs.msg import JointState
 
-from baxter_interfaces.env.environments import one_box_environment, empty_environment
+from baxter_interfaces.env.environments import one_box_environment, empty_environment, one_pillar_environment
 from baxter_interfaces.utils.utils import get_joint_names
 
 import copy as cp
@@ -64,6 +64,8 @@ def augment_dataset(input_file, output_file, env_name, label_generator):
         one_box_environment() # initialize env;
     elif env_name == 'empty_environment':
         empty_environment()
+    elif env_name == 'one_pillar_environment':
+        one_pillar_environment()
 
     with open(input_file, mode='rb') as input_file:
         csv_reader = csv.DictReader(input_file, quoting=csv.QUOTE_NONNUMERIC)

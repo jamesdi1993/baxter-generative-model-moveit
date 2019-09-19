@@ -95,7 +95,7 @@ def construct_robot_state(space, waypoint):
     """
     Map a waypoint to an AbstractState object in OMPL
     """
-    print("The waypoint is: %s" % (waypoint,))
+    # print("The waypoint is: %s" % (waypoint,))
     state = ob.State(space)
     for joint, value in waypoint.items():
         joint_name = joint.split('_')[1] # example waypoint: {'right_e0': 0, 'right_e1': 0, ...}
@@ -104,8 +104,10 @@ def construct_robot_state(space, waypoint):
     return state
 
 def generate_random_state(space, limb_name):
-    waypoint = sample_loc(1, limb_name)
-    return construct_robot_state(space, waypoint)
+    waypoints = sample_loc(1, limb_name)
+    joint_value_array = zip(*waypoints.values())  # Convert to list, and then transform.
+    joint_array = map(lambda joint: dict(zip(waypoints.keys(), joint)), joint_value_array)  # Add key to each config
+    return construct_robot_state(space, joint_array[0])
 
 def test_convert_state_to_robot_state():
     space = ob.RealVectorStateSpace(7)
